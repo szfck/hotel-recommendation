@@ -1,0 +1,18 @@
+<hr class="my-4">
+
+<!-- <h1>Confirm your code received from email</h1> -->
+<div class="row">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <form>
+            <div class="form-group">
+                <label for="exampleInputCode1">Confirm your code received from email</label>
+                <input class="form-control" name="exampleInputPassword1" placeholder="code" [(ngModel)]="code">
+            </div>
+
+            <button class="btn btn-primary" (click)="confirm()">Confirm</button>
+            <button class="btn btn-primary" (click)="resend()">Resend Code</button>
+        </form>
+        <!-- <hr class="my-4"> -->
+    </div>
+</div>

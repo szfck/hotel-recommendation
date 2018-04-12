@@ -2,23 +2,28 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RoutingModule } from './routing/routing.module';
-
+import { AuthguardGuard } from './authguard/authguard.guard';
 import { AppComponent } from './app.component';
 import { 
     LoginComponent,
-    NavbarComponent
+    NavbarComponent,
+    HomeComponent,
+    SignupComponent,
+    ConfirmComponent
 } from './component';
 import { 
     UserService,
     CognitoService
 } from './service';
 
-
 @NgModule({
     declarations: [
         AppComponent,
         LoginComponent,
-        NavbarComponent
+        NavbarComponent,
+        HomeComponent,
+        SignupComponent,
+        ConfirmComponent
     ],
     imports: [
         BrowserModule,
