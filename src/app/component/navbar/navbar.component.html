@@ -1,0 +1,15 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" routerLink="/">Hotel</a>
+    <div *ngIf="isLoggedIn(); then logoutTemplate else loginTemplate"></div>
+
+</nav>
+
+<ng-template #loginTemplate>
+    <!-- Please login to continue.  -->
+    <!-- <button type="button" class="btn btn-primary" (click)="login()">Login</button> -->
+</ng-template>
+
+<ng-template #logoutTemplate>
+    <!-- Hi, {{ this.userService.getUserName() }} -->
+    <button type="button" class="btn btn-primary" (click)="logout()">Logout now</button>
+</ng-template>
