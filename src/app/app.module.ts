@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RoutingModule } from './routing/routing.module';
 import { AuthguardGuard } from './authguard/authguard.guard';
 import { AppComponent } from './app.component';
+// import { ngmap } from 'ngmap';
 import { 
     LoginComponent,
     NavbarComponent,
