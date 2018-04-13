@@ -24,7 +24,8 @@ export class HomeComponent implements OnInit {
         };
 
         this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
-
+        this.map.setCenter(nycPos);
+        
         // Try HTML5 geolocation.
         if (navigator.geolocation) {
             let that = this;
@@ -41,7 +42,7 @@ export class HomeComponent implements OnInit {
                 that.map.setZoom(12);
             }, function () {
                 console.log(`pos error`);
-            }, { timeout: 10000 });
+            }, { timeout: 20000 });
         } else {
             // Browser doesn't support Geolocation
             console.log(`pos error`);
@@ -51,6 +52,13 @@ export class HomeComponent implements OnInit {
 
         var marker = new google.maps.Marker({
             position: nycPos,
+            map: this.map
+        });
+
+        // Layer with all the hotel location markers
+        var ctaLayer = new google.maps.KmlLayer({
+            //need to host kml file on public server which google can search for
+            url: 'https://raw.githubusercontent.com/pengcheng95/hbdmap/master/HBD.kml',
             map: this.map
         });
     }
