@@ -16,15 +16,41 @@ export class HomeComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {
+        let nycPos = new google.maps.LatLng(40.6945088, -73.9871052);
         var mapProp = {
-            center: new google.maps.LatLng(18.5793, 73.8143),
-            zoom: 15,
+            center: nycPos,
+            zoom: 12,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
+
         this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
 
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+            let that = this;
+            console.log(`start finding position`);
+            navigator.geolocation.getCurrentPosition(function (position) {
+                // this.map.setCenter(new google.maps.LatLng(40.6945088, -73.9871052));
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                console.log(`find position: ${pos.lat}, ${pos.lng}`);
+
+                that.map.setCenter(new google.maps.LatLng(pos.lat, pos.lng));
+                that.map.setZoom(12);
+            }, function () {
+                console.log(`pos error`);
+            }, { timeout: 10000 });
+        } else {
+            // Browser doesn't support Geolocation
+            console.log(`pos error`);
+        }
+
+        console.log(`finished`);
+
         var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(18.5793, 73.8143),
+            position: nycPos,
             map: this.map
         });
     }
@@ -37,4 +63,5 @@ export class HomeComponent implements OnInit {
         e.preventDefault();
         this.map.setCenter(new google.maps.LatLng(this.latitude, this.longitude));
     }
+
 }
