@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RoutingModule } from './routing/routing.module';
 import { AuthguardGuard } from './authguard/authguard.guard';
 import { AppComponent } from './app.component';
-// import { ngmap } from 'ngmap';
+
 import { 
     LoginComponent,
     NavbarComponent,
@@ -16,6 +16,7 @@ import {
     UserService,
     CognitoService
 } from './service';
+import { GoogleMapComponent } from './component/google-map/google-map.component';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import {
         NavbarComponent,
         HomeComponent,
         SignupComponent,
-        ConfirmComponent
+        ConfirmComponent,
+        GoogleMapComponent
     ],
     imports: [
         BrowserModule,
