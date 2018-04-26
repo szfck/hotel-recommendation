@@ -6,9 +6,9 @@ import {
     LoginComponent,
     SignupComponent,
     ConfirmComponent,
-    HomeComponent
+    HomeComponent,
+    ProfileComponent
 } from '../component';
-
 
 const routes: Routes = [
     {
@@ -31,6 +31,11 @@ const routes: Routes = [
     {
         path: 'home',
         component: HomeComponent,
+        canActivate: [AuthguardGuard]
+    },
+    {
+        path: 'profile',
+        component: ProfileComponent,
         canActivate: [AuthguardGuard]
     }
 ];

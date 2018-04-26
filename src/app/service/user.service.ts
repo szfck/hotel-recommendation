@@ -9,16 +9,43 @@ import {
 } from 'amazon-cognito-identity-js';
 import * as AWS from 'aws-sdk';
 import {
-    User
+    User,
+    Hotel
 } from '../constant';
 
 @Injectable()
 export class UserService {
 
     constructor(
-        private router: Router, 
+        private router: Router,
         private cognitoService: CognitoService
     ) { }
+
+    getRecommendHotels() {
+        let hotelList: Hotel[] = [
+            {
+                name: "A",
+                lat: 40.6945088,
+                lng: -73.9871052,
+                desc: "Hotel A desc",
+                tags: [
+                    "tag1",
+                    "tag2"
+                ]
+            }, 
+            {
+                name: "B",
+                lat: 40.7000000,
+                lng: -74.0000000,
+                desc: "Hotel B desc",
+                tags: [
+                    "tag1",
+                    "tag3"
+                ]
+            }
+        ];
+        return hotelList;
+    }
 
     signup(user: User, router: Router) {
         var attributeList = [];
@@ -88,7 +115,7 @@ export class UserService {
             Password: password,
         };
         var authenticationDetails = new AuthenticationDetails(authenticationData);
-        
+
         var userData = {
             Username: username,
             Pool: this.cognitoService.getUserPool()

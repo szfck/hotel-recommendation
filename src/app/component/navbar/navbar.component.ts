@@ -33,4 +33,8 @@ export class NavbarComponent implements OnInit {
         return this.userService.getUserLoggedIn();
     }
 
+    profile() {
+        this.router.navigate(['/profile']);
+    }
+
 }

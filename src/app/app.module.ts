@@ -17,6 +17,7 @@ import {
     CognitoService
 } from './service';
 import { GoogleMapComponent } from './component/google-map/google-map.component';
+import { ProfileComponent } from './component/profile/profile.component';
 
 @NgModule({
     declarations: [
@@ -26,7 +27,8 @@ import { GoogleMapComponent } from './component/google-map/google-map.component'
         HomeComponent,
         SignupComponent,
         ConfirmComponent,
-        GoogleMapComponent
+        GoogleMapComponent,
+        ProfileComponent
     ],
     imports: [
         BrowserModule,

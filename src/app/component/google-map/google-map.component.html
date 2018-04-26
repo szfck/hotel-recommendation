@@ -1,7 +1,57 @@
-<h1>{{ title }}</h1>
+<!-- <h1>{{ title }}</h1> -->
 
-<button type="button" class="btn btn-link" (click)="relocate()">My Location</button>
-<div id="map-container">
-    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-    <div id="map"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-3">
+            <h3 class="mt-3 center">recommend hotels</h3>
+
+            <!-- list-group-item-action flex-column align-items-start active -->
+            <div class="list-group mt-3">
+                <ul *ngFor="let hotel of hotels">
+                    <a href="#" class="list-group-item ">
+                        <div>
+                            <h5 class="mb-1">{{ hotel.name }}</h5>
+                            <ul *ngFor="let tag of hotel.tags">
+                                <label>{{ tag }}</label>
+                                <!-- <small>{{ tag }}</small> -->
+                            </ul>
+                        </div>
+                        <!-- <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p> -->
+                        <small>{{ hotel.desc }}</small>
+                    </a>
+                </ul>
+            </div>
+            <!-- <form class="m-3 form-inline">
+                <input id="pac-input" class="form-control mr-sm-2" type="search" placeholder="Search by location" aria-label="Search">
+            </form> -->
+            <!-- <input id="pac-input" class="controls" type="text" placeholder="Search Box"> -->
+            <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+        </div>
+        <div class="col">
+            <div class="row m-2">
+                <div class="mr-3">
+                    <input id="pac-input" class="form-control mr-sm-2" type="search" placeholder="Search by location" aria-label="Search">
+                </div>
+                <div class="mr-3">
+                    <button type="button" class="btn-info" (click)="relocate()">My Location</button>
+                </div>
+                <div class="mr-3">
+                    <button type="button" class="btn-info" (click)="recommend()">find hotel</button>
+                </div>
+                <div>
+                    <button type="button" class="btn-info" (click)="clear()">clear</button>
+                </div>
+            </div>
+
+
+            <div id="map-container">
+
+                <!-- <input id="pac-input" class="controls" type="text" placeholder="Search Box"> -->
+                <div id="map"></div>
+            </div>
+        </div>
+
+        <!-- <button type="button" class="btn-info" (click)="test()">test</button> -->
+
+    </div>
 </div>
