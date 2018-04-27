@@ -57,22 +57,41 @@ export class GoogleMapComponent implements OnInit {
         this.hotelList = [];
 
         this.hotels.forEach(hotel => {
-            // if (!isFilter || hotel.tags.findIndex(targetTag) > -1) {
-            //     this.hotelList.push(hotel);
-            // }
-            // if ()
-            this.hotelList.push(hotel);
+            if (!isFilter || hotel.tags.indexOf(targetTag) > -1) {
+                this.hotelList.push(hotel);
+            }
+            // this.hotelList.push(hotel);
         });
-
+        var that = this;
         this.hotelList.forEach(hotel => {
-            this.hotelMarkers.push(new google.maps.Marker({
+            var marker = new google.maps.Marker({
                 map: this.myMap,
                 title: hotel.name,
                 position: new google.maps.LatLng(hotel.lat, hotel.lng)
-            }));
+            })
+
+            hotel.marker = marker;
+
             console.log(hotel);
+
+            var infowindow = new google.maps.InfoWindow({
+                content: hotel.desc
+            });
+
+            marker.addListener('click', function () {
+                infowindow.open(that.myMap, marker);
+            });
+
+            this.hotelMarkers.push(marker);
+            
         });
 
+
+    }
+
+    clickHotel(hotel: Hotel) {
+        console.log(hotel);
+        new google.maps.event.trigger(hotel.marker, 'click');
     }
 
     recommend() {
@@ -139,7 +158,7 @@ export class GoogleMapComponent implements OnInit {
         let that = this;
         google.maps.event.addListener(map, 'click', function (event) {
             console.log(event.latLng);
-            
+
             that.addCenter(map, event.latLng);
             // that.addCenterMarker(event.latLng);
             // if (that.centerMarker !== undefined) {
@@ -199,7 +218,7 @@ export class GoogleMapComponent implements OnInit {
             // if (that.centerMarker !== undefined) {
             //     that.centerMarker.setMap(null);
             // }
-            
+
 
             // For each place, get the icon, name and location.
             var bounds = new google.maps.LatLngBounds();
@@ -218,7 +237,7 @@ export class GoogleMapComponent implements OnInit {
                 //     scaledSize: new google.maps.Size(25, 25)
                 // };
                 console.log(place.geometry.location);
-                
+
                 that.addCenter(map, place.geometry.location);
                 // Create a marker for each place.
 

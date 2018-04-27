@@ -4,4 +4,5 @@ export interface Hotel {
     lng: number;
     desc: string;
     tags: string[];
+    marker?: google.maps.Marker;
 };

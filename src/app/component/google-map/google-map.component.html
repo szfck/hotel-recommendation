@@ -26,7 +26,7 @@
 
             <div class="list-group mt-3">
                 <ul *ngFor="let hotel of hotelList">
-                    <a href="#" class="list-group-item ">
+                    <div (click)="clickHotel(hotel)" class="list-group-item ">
                         <div>
                             <h5 class="mb-1">{{ hotel.name }}</h5>
                             <ul *ngFor="let tag of hotel.tags">
@@ -36,7 +36,7 @@
                         </div>
                         
                         <small>{{ hotel.desc }}</small>
-                    </a>
+                    </div>
                 </ul>
             </div>
 
