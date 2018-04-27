@@ -3,24 +3,44 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-3">
-            <h3 class="mt-3 center">recommend hotels</h3>
-
+            <!-- <h3 class="mt-3 center">recommend hotels</h3> -->
+            <div class="ml-3 mt-2">
+                <!-- <ul class="list-inline">
+                    <li class="list-inline-item">
+                        <a target="_blank" href="#">FB</a>
+                    </li>
+                    <li class="list-inline-item">
+                            
+                        </li>
+                </ul> -->
+                <li class="list-inline-item" *ngFor="let tag of tags">
+                    <button class="btn btn-outline-info btn-sm m-1" (click)="clickTag(tag)">{{ tag }}</button>
+                </li>
+                <!-- <ul *ngFor="let tag of tags">
+                    <li class="list-inline-item">
+                        <a target="_blank" href="#">FB</a>
+                    </li>
+                </ul> -->
+            </div>
             <!-- list-group-item-action flex-column align-items-start active -->
+
             <div class="list-group mt-3">
-                <ul *ngFor="let hotel of hotels">
+                <ul *ngFor="let hotel of hotelList">
                     <a href="#" class="list-group-item ">
                         <div>
                             <h5 class="mb-1">{{ hotel.name }}</h5>
                             <ul *ngFor="let tag of hotel.tags">
                                 <label>{{ tag }}</label>
-                                <!-- <small>{{ tag }}</small> -->
+                                
                             </ul>
                         </div>
-                        <!-- <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p> -->
+                        
                         <small>{{ hotel.desc }}</small>
                     </a>
                 </ul>
             </div>
+
+
             <!-- <form class="m-3 form-inline">
                 <input id="pac-input" class="form-control mr-sm-2" type="search" placeholder="Search by location" aria-label="Search">
             </form> -->

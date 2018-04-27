@@ -1,5 +1,5 @@
 #map {
-    height: 500px;
+    height: 700px;
   }
   /* Optional: Makes the sample page fill the window. */
   /* html, body {
@@ -82,3 +82,10 @@
   #target {
     width: 345px;
   }
+
+  .list-group{
+    max-height: 650px;
+    
+    overflow:auto;
+    
+}
