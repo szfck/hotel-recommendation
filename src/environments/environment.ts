@@ -10,6 +10,11 @@ export const environment = {
 
     region: 'us-east-1',
     // identityPoolId: 'us-east-2:02bc6049-e116-4003-9ea5-0cf6b11089e5',
-    userPoolId: 'us-east-1_XesdPhGwu',
-    clientId: '466vqfna94lc1pf8b8tp5go13g'
+    // userPoolId: 'us-east-1_XesdPhGwu',
+    // clientId: '466vqfna94lc1pf8b8tp5go13g'
+
+    userPoolId: 'us-east-1_0WNkBU8jn',
+    clientId: '78ft03j7lmt4ko46eerbfdnaqj'
+
+    
 };

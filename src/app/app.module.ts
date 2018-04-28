@@ -4,17 +4,20 @@ import { FormsModule } from '@angular/forms';
 import { RoutingModule } from './routing/routing.module';
 import { AuthguardGuard } from './authguard/authguard.guard';
 import { AppComponent } from './app.component';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 
-import { 
+import {
     LoginComponent,
     NavbarComponent,
     HomeComponent,
     SignupComponent,
     ConfirmComponent
 } from './component';
-import { 
+import {
     UserService,
-    CognitoService
+    CognitoService,
+    InMemoryDataService
 } from './service';
 import { GoogleMapComponent } from './component/google-map/google-map.component';
 import { ProfileComponent } from './component/profile/profile.component';
@@ -33,7 +36,11 @@ import { ProfileComponent } from './component/profile/profile.component';
     imports: [
         BrowserModule,
         RoutingModule,
-        FormsModule
+        FormsModule,
+        HttpClientModule,
+        // HttpClientInMemoryWebApiModule.forRoot(
+        //     InMemoryDataService, { dataEncapsulation: false }
+        // )
     ],
     providers: [
         UserService,

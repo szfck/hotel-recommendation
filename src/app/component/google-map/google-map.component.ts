@@ -15,7 +15,7 @@ export class GoogleMapComponent implements OnInit {
     hotelList: Hotel[];
     tagItems: { [tag: string]: Hotel[] } = {};
     tags: string[] = [];
-    centerMarker: google.maps.Marker;
+    // centerMarker: google.maps.Marker;
 
     constructor(private userServie: UserService) { }
 
@@ -41,11 +41,6 @@ export class GoogleMapComponent implements OnInit {
         this.initAutocomplete();
     }
 
-    // data = [
-    //     [40.6945088, -73.9871052],
-    //     [40.7000000, -74.0000000]
-    //     // [-87.62374260000001,41.8952022],
-    // ];
     clickTag(tag) {
         console.log(tag);
         this.filter(true, tag);
@@ -60,7 +55,6 @@ export class GoogleMapComponent implements OnInit {
             if (!isFilter || hotel.tags.indexOf(targetTag) > -1) {
                 this.hotelList.push(hotel);
             }
-            // this.hotelList.push(hotel);
         });
         var that = this;
         this.hotelList.forEach(hotel => {
@@ -83,9 +77,8 @@ export class GoogleMapComponent implements OnInit {
             });
 
             this.hotelMarkers.push(marker);
-            
-        });
 
+        });
 
     }
 
@@ -95,44 +88,53 @@ export class GoogleMapComponent implements OnInit {
     }
 
     recommend() {
-        // this.addMarkers();
-        this.hotels = this.userServie.getRecommendHotels();
+        if (this.myMap.centerMarker === undefined) {
+            alert('choose you location first');
+            return
+        }
+        const position = this.myMap.centerMarker.getPosition();
+        
+        this.userServie.getRecommendHotels(position).
+            subscribe(hotels => {
+                this.hotels = hotels;
+                // Clear out the old markers.
+                this.hotelMarkers.forEach(function (marker) {
+                    marker.setMap(null);
+                });
 
-        // Clear out the old markers.
-        this.hotelMarkers.forEach(function (marker) {
-            marker.setMap(null);
-        });
+                this.tagItems = {};
+                this.tags = [];
 
-        this.tagItems = {};
-        this.tags = [];
+                // add tags
+                this.hotels.forEach(hotel => {
+                    hotel.tags.forEach(tag => {
+                        console.log(tag);
+                        if (this.tagItems[tag] === undefined) {
+                            this.tagItems[tag] = [hotel];
 
-        // add tags
-        this.hotels.forEach(hotel => {
-            hotel.tags.forEach(tag => {
-                console.log(tag);
-                if (this.tagItems[tag] === undefined) {
-                    this.tagItems[tag] = [hotel];
+                        } else {
+                            var tmp = this.tagItems[tag];
+                            this.tagItems[tag].push(hotel);
+                        }
+                    });
+                });
 
-                } else {
-                    var tmp = this.tagItems[tag];
-                    this.tagItems[tag].push(hotel);
+                for (var tag in this.tagItems) {
+                    this.tags.push(tag);
                 }
 
+                this.filter(false);
             });
-        });
 
-        for (var tag in this.tagItems) {
-            this.tags.push(tag);
-        }
 
-        this.filter(false);
 
     }
 
     clear() {
-        this.hotelMarkers.forEach(function (marker) {
-            marker.setMap(null);
+        this.hotelList.forEach(hotel => {
+            hotel.marker.setMap(null);
         });
+
         this.hotelList = [];
         this.tagItems = {};
         this.tags = [];
