@@ -25,7 +25,7 @@ export class UserService {
         private http: HttpClient
     ) { }
 
-    getToken() {
+    getToken(callback) {
         var cognitoUser = this.cognitoService.getCurrentUser();
         var router = this.router;
         console.log(cognitoUser);
@@ -38,28 +38,70 @@ export class UserService {
                     router.navigate(['/login']);
                 }
                 token = session.getIdToken().getJwtToken();
+                callback(token);
+                // console.log(`token: ${token}`);
             });
         }
         return token;
     }
 
     // get hotel recommendations given the current position and username
-    getRecommendHotels(position: google.maps.LatLng): Observable<Hotel[]> {
-        const token = this.getToken();
+    getRecommendHotels(token, position: google.maps.LatLng): Observable<Hotel[]> {
+        // this.getToken(token => {
+
+        // })
+        // const token =  this.getToken();
         console.log(token);
         const httpOptions = {
             headers: {
                 Authorization: token
             }
         };
-        
+
         const username = this.cognitoService.getCurrentUser().getUsername();
 
         // TODO 
         // change baseAPI to aws api gateway url
-        const baseAPI = 'http://localhost:3000';
+        // const baseAPI = 'http://localhost:3000';
+        const baseAPI = 'https://uvnqrrdhrc.execute-api.us-east-1.amazonaws.com/prod';
+
         let hotelsUrl = `${baseAPI}/hotels?username=${username}&lat=${position.lat()}&lng=${position.lng()}`;
+        // let hotelsUrl = `${baseAPI}/hotels`;
+        
         return this.http.get<Hotel[]>(hotelsUrl, httpOptions);
+    }
+
+    // user click a tag
+    // send click info to server
+    clickTag(tag: String) {
+        // const token = this.getToken();
+        // console.log(token);
+        // const httpOptions = {
+        //     headers: {
+        //         Authorization: token
+        //     }
+        // };
+
+        const username = this.cognitoService.getCurrentUser().getUsername();
+
+        interface clickInfo {
+            username: String;
+            tag: String;
+        };
+
+        // TODO 
+        // change baseAPI to aws api gateway url
+        // const baseAPI = 'http://localhost:3000';
+        const baseAPI = 'https://uvnqrrdhrc.execute-api.us-east-1.amazonaws.com/prod';
+        
+        let clickTagUrl = `${baseAPI}/click`;
+
+        const clickinfo: clickInfo = {
+            username: username,
+            tag: tag
+        };
+
+        // return this.http.post<clickInfo>(clickTagUrl, clickinfo, httpOptions);
     }
 
     signup(user: User, router: Router) {

@@ -93,38 +93,72 @@ export class GoogleMapComponent implements OnInit {
             return
         }
         const position = this.myMap.centerMarker.getPosition();
-        
-        this.userServie.getRecommendHotels(position).
-            subscribe(hotels => {
-                this.hotels = hotels;
-                // Clear out the old markers.
-                this.hotelMarkers.forEach(function (marker) {
-                    marker.setMap(null);
-                });
 
-                this.tagItems = {};
-                this.tags = [];
-
-                // add tags
-                this.hotels.forEach(hotel => {
-                    hotel.tags.forEach(tag => {
-                        console.log(tag);
-                        if (this.tagItems[tag] === undefined) {
-                            this.tagItems[tag] = [hotel];
-
-                        } else {
-                            var tmp = this.tagItems[tag];
-                            this.tagItems[tag].push(hotel);
-                        }
+        // let that = this;
+        this.userServie.getToken(token => {
+            this.userServie.getRecommendHotels(token, position).
+                subscribe(hotels => {
+                    this.hotels = hotels;
+                    // Clear out the old markers.
+                    this.hotelMarkers.forEach(function (marker) {
+                        marker.setMap(null);
                     });
+
+                    this.tagItems = {};
+                    this.tags = [];
+
+                    // add tags
+                    this.hotels.forEach(hotel => {
+                        hotel.tags.forEach(tag => {
+                            console.log(tag);
+                            if (this.tagItems[tag] === undefined) {
+                                this.tagItems[tag] = [hotel];
+
+                            } else {
+                                var tmp = this.tagItems[tag];
+                                this.tagItems[tag].push(hotel);
+                            }
+                        });
+                    });
+
+                    for (var tag in this.tagItems) {
+                        this.tags.push(tag);
+                    }
+
+                    this.filter(false);
                 });
+        });
+        // this.userServie.getRecommendHotels(position).
+        // subscribe(hotels => {
+        //     this.hotels = hotels;
+        //     // Clear out the old markers.
+        //     this.hotelMarkers.forEach(function (marker) {
+        //         marker.setMap(null);
+        //     });
 
-                for (var tag in this.tagItems) {
-                    this.tags.push(tag);
-                }
+        //     this.tagItems = {};
+        //     this.tags = [];
 
-                this.filter(false);
-            });
+        //     // add tags
+        //     this.hotels.forEach(hotel => {
+        //         hotel.tags.forEach(tag => {
+        //             console.log(tag);
+        //             if (this.tagItems[tag] === undefined) {
+        //                 this.tagItems[tag] = [hotel];
+
+        //             } else {
+        //                 var tmp = this.tagItems[tag];
+        //                 this.tagItems[tag].push(hotel);
+        //             }
+        //         });
+        //     });
+
+        //     for (var tag in this.tagItems) {
+        //         this.tags.push(tag);
+        //     }
+
+        //     this.filter(false);
+        // });
 
 
 
