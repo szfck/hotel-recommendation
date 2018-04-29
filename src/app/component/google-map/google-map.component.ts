@@ -11,9 +11,8 @@ import { environment } from '../../../environments/environment.prod';
 export class GoogleMapComponent implements OnInit {
     title: string = 'Hotel Recommendation Demo';
     myMap;
-    hotelMarkers = [];
     hotels: Hotel[];
-    hotelList: Hotel[];
+    hotelList: Hotel[] = [];
     tagItems: { [tag: string]: Hotel[] } = {};
     tags: string[] = [];
     
@@ -49,12 +48,14 @@ export class GoogleMapComponent implements OnInit {
                 console.log(`click tag resp: ${res}`);
             });
         });
-        this.filter(true, tag);
+        this.filter(tag == 'All' ? false : true, tag);
     }
 
     filter(isFilter, targetTag?) {
         console.log(targetTag);
-        this.hotelMarkers = [];
+        this.hotelList.forEach(hotel => {
+            hotel.marker.setMap(null);
+        });
         this.hotelList = [];
 
         this.hotels.forEach(hotel => {
@@ -82,8 +83,6 @@ export class GoogleMapComponent implements OnInit {
                 infowindow.open(that.myMap, marker);
             });
 
-            this.hotelMarkers.push(marker);
-
         });
 
     }
@@ -105,16 +104,13 @@ export class GoogleMapComponent implements OnInit {
             this.userServie.getRecommendHotels(token, position).
                 subscribe(hotels => {
                     this.hotels = hotels;
-                    // Clear out the old markers.
-                    this.hotelMarkers.forEach(function (marker) {
-                        marker.setMap(null);
-                    });
-
                     this.tagItems = {};
                     this.tags = [];
-
+                    
+                    this.tagItems['All'] = [];
                     // add tags
                     this.hotels.forEach(hotel => {
+                        this.tagItems['All'].push(hotel);
                         hotel.tags.forEach(tag => {
                             console.log(tag);
                             if (this.tagItems[tag] === undefined) {
@@ -127,6 +123,8 @@ export class GoogleMapComponent implements OnInit {
                         });
                     });
 
+                    
+
                     for (var tag in this.tagItems) {
                         this.tags.push(tag);
                     }
@@ -134,9 +132,6 @@ export class GoogleMapComponent implements OnInit {
                     this.filter(false);
                 });
         });
-
-
-
     }
 
     clear() {
@@ -149,18 +144,11 @@ export class GoogleMapComponent implements OnInit {
         this.tags = [];
     }
 
-
-    // addMarkers() {
-
-
-    // }
-
-
     initAutocomplete() {
         var map = new google.maps.Map(document.getElementById('map'), {
             center: new google.maps.LatLng(40.6945088, -73.9871052),
             zoom: 4,
-            // minZoom: 1
+            minZoom: 3
             // center: { lat: 40.6945088, lng: -73.9871052 },
             // zoom: 12,
             // mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -171,22 +159,6 @@ export class GoogleMapComponent implements OnInit {
             console.log(event.latLng);
 
             that.addCenter(map, event.latLng);
-            // that.addCenterMarker(event.latLng);
-            // if (that.centerMarker !== undefined) {
-            //     that.centerMarker.setMap(null);
-            // }
-            // var icon = {
-            //     url: "https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png",
-            //     size: new google.maps.Size(71, 71),
-            //     origin: new google.maps.Point(0, 0),
-            //     anchor: new google.maps.Point(17, 34),
-            //     scaledSize: new google.maps.Size(25, 25)
-            // };
-            // that.centerMarker = new google.maps.Marker({
-            //     map: map,
-            //     position: event.latLng,
-            //     icon: icon
-            // });
         });
 
         this.myMap = map;
