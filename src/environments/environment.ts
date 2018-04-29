@@ -5,16 +5,12 @@
 
 export const environment = {
     production: false,
-    host: 'https://954lf6iws6.execute-api.us-east-1.amazonaws.com',
-    api: 'dev',
+    host: 'https://55zec3zmo8.execute-api.us-east-1.amazonaws.com',
+    api: 'prod',
 
     region: 'us-east-1',
-    // identityPoolId: 'us-east-2:02bc6049-e116-4003-9ea5-0cf6b11089e5',
-    // userPoolId: 'us-east-1_XesdPhGwu',
-    // clientId: '466vqfna94lc1pf8b8tp5go13g'
 
     userPoolId: 'us-east-1_0WNkBU8jn',
     clientId: '78ft03j7lmt4ko46eerbfdnaqj'
 
-    
 };

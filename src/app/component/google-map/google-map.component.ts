@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { } from '@types/googlemaps';
 import { UserService } from '../../service';
 import { Hotel } from '../../constant';
+import { environment } from '../../../environments/environment.prod';
 @Component({
     selector: 'app-google-map',
     templateUrl: './google-map.component.html',
@@ -15,8 +16,7 @@ export class GoogleMapComponent implements OnInit {
     hotelList: Hotel[];
     tagItems: { [tag: string]: Hotel[] } = {};
     tags: string[] = [];
-    // centerMarker: google.maps.Marker;
-
+    
     constructor(private userServie: UserService) { }
 
     addCenter(map, latLng) {
@@ -43,6 +43,12 @@ export class GoogleMapComponent implements OnInit {
 
     clickTag(tag) {
         console.log(tag);
+        this.userServie.getToken(token => {
+            console.log(token);
+            this.userServie.clickTag(token, tag).subscribe(res => {
+                console.log(`click tag resp: ${res}`);
+            });
+        });
         this.filter(true, tag);
     }
 
@@ -128,37 +134,6 @@ export class GoogleMapComponent implements OnInit {
                     this.filter(false);
                 });
         });
-        // this.userServie.getRecommendHotels(position).
-        // subscribe(hotels => {
-        //     this.hotels = hotels;
-        //     // Clear out the old markers.
-        //     this.hotelMarkers.forEach(function (marker) {
-        //         marker.setMap(null);
-        //     });
-
-        //     this.tagItems = {};
-        //     this.tags = [];
-
-        //     // add tags
-        //     this.hotels.forEach(hotel => {
-        //         hotel.tags.forEach(tag => {
-        //             console.log(tag);
-        //             if (this.tagItems[tag] === undefined) {
-        //                 this.tagItems[tag] = [hotel];
-
-        //             } else {
-        //                 var tmp = this.tagItems[tag];
-        //                 this.tagItems[tag].push(hotel);
-        //             }
-        //         });
-        //     });
-
-        //     for (var tag in this.tagItems) {
-        //         this.tags.push(tag);
-        //     }
-
-        //     this.filter(false);
-        // });
 
 
 

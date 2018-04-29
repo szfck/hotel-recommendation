@@ -4,6 +4,7 @@ import { CognitoService } from './cognito.service'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { environment } from '../../environments/environment';
 import {
     CognitoUserPool,
     CognitoUserAttribute,
@@ -16,8 +17,21 @@ import {
     Hotel
 } from '../constant';
 
+interface clickInfo {
+    username: String;
+    tag: String;
+};
+
+interface QueryInfo {
+    username: String;
+    lat: Number;
+    lng: Number;
+};
+
 @Injectable()
 export class UserService {
+
+    public static baseAPI = `${environment.host}/${environment.api}`;
 
     constructor(
         private router: Router,
@@ -47,11 +61,34 @@ export class UserService {
 
     // get hotel recommendations given the current position and username
     getRecommendHotels(token, position: google.maps.LatLng): Observable<Hotel[]> {
-        // this.getToken(token => {
+        
+        const httpOptions = {
+            headers: {
+                Authorization: token
+            }
+        };
 
-        // })
-        // const token =  this.getToken();
+        const username = this.cognitoService.getCurrentUser().getUsername();
+        
+        // let hotelsUrl = `${baseAPI}/hotels?username=${username}&lat=${position.lat()}&lng=${position.lng()}`;
+        let hotelsUrl = `${UserService.baseAPI}/hotels`;
+        
+        // let hotelsUrl = `${baseAPI}/hotels`;
         console.log(token);
+        console.log(hotelsUrl);
+        const queryInfo: QueryInfo = {
+            username: username,
+            lat: position.lat(),
+            lng: position.lat()
+        };
+
+        return this.http.post<Hotel[]>(hotelsUrl, queryInfo, httpOptions);
+    }
+
+    // user click a tag
+    // send click info to server
+    clickTag(token, tag: String): Observable<clickInfo> {
+        console.log(`get token ${token}`);
         const httpOptions = {
             headers: {
                 Authorization: token
@@ -60,48 +97,14 @@ export class UserService {
 
         const username = this.cognitoService.getCurrentUser().getUsername();
 
-        // TODO 
-        // change baseAPI to aws api gateway url
-        // const baseAPI = 'http://localhost:3000';
-        const baseAPI = 'https://uvnqrrdhrc.execute-api.us-east-1.amazonaws.com/prod';
-
-        let hotelsUrl = `${baseAPI}/hotels?username=${username}&lat=${position.lat()}&lng=${position.lng()}`;
-        // let hotelsUrl = `${baseAPI}/hotels`;
-        
-        return this.http.get<Hotel[]>(hotelsUrl, httpOptions);
-    }
-
-    // user click a tag
-    // send click info to server
-    clickTag(tag: String) {
-        // const token = this.getToken();
-        // console.log(token);
-        // const httpOptions = {
-        //     headers: {
-        //         Authorization: token
-        //     }
-        // };
-
-        const username = this.cognitoService.getCurrentUser().getUsername();
-
-        interface clickInfo {
-            username: String;
-            tag: String;
-        };
-
-        // TODO 
-        // change baseAPI to aws api gateway url
-        // const baseAPI = 'http://localhost:3000';
-        const baseAPI = 'https://uvnqrrdhrc.execute-api.us-east-1.amazonaws.com/prod';
-        
-        let clickTagUrl = `${baseAPI}/click`;
+        let clickTagUrl = `${UserService.baseAPI}/tags`;
 
         const clickinfo: clickInfo = {
             username: username,
             tag: tag
         };
 
-        // return this.http.post<clickInfo>(clickTagUrl, clickinfo, httpOptions);
+        return this.http.post<clickInfo>(clickTagUrl, clickinfo, httpOptions);
     }
 
     signup(user: User, router: Router) {
