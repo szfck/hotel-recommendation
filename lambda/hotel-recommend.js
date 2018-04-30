@@ -16,15 +16,16 @@ exports.handler = (event, context, callback) => {
     var ids = [];
     
     dynamo.scan({
-        TableName: 'Chat-Conversations',
-        Select: 'ALL_ATTRIBUTES'
+        TableName: 'Hotel',
+        Select: 'ALL_ATTRIBUTES',
+        Limit: 10
         }, function(err, data) {
             if(err !== null) { 
                 console.log(err, err.stack); // an error occurred
             }
             else {
                 data.Items.forEach(function (item) {
-                    ids.push(item.ConversationId.S);
+                    ids.push(item.id.S);
                 });
                 console.log(ids);           // successful response
             }
