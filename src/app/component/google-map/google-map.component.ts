@@ -99,6 +99,8 @@ export class GoogleMapComponent implements OnInit {
         }
         const position = this.myMap.centerMarker.getPosition();
 
+        // console.log(`send postion (${position.lat()}, ${position.lng()})`);
+        
         // let that = this;
         this.userServie.getToken(token => {
             this.userServie.getRecommendHotels(token, position).

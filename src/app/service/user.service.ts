@@ -79,7 +79,7 @@ export class UserService {
         const queryInfo: QueryInfo = {
             username: username,
             lat: position.lat(),
-            lng: position.lat()
+            lng: position.lng()
         };
 
         return this.http.post<Hotel[]>(hotelsUrl, queryInfo, httpOptions);
