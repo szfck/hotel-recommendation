@@ -27,17 +27,14 @@ exports.handler = (event, context, callback) => {
 };
 
 function insertTag(event, data, callback) {
-    var tags = [event.tag];
-    console.log(tags);
+    var tags = {tags : [event.tag]};
     var price = Number.parseFloat(event.price || 0);
     var distance = Number.parseFloat(event.distance || 0);
-    console.log(typeof(price));
-    console.log(typeof(distance));
     dynamo.putItem({
         TableName: 'Hotel-User',
         Item: {
             username: {S: event.username},
-            tag: {SS: tags},
+            tags: {S: JSON.stringify(tags)},
             distance: {N: distance+""},
             price: {N: price+""}
         }
@@ -52,21 +49,26 @@ function insertTag(event, data, callback) {
 }
 
 function updateTag(event, data, callback) {
-    var newtags = data.Items[0].tag.SS;
+    var newtags = JSON.parse(data.Items[0].tags.S).tags;
+    console.log(newtags);
     newtags.push(event.tag);
-    var price = 0.5 * data.Items[0].price.N + 0.5 * Number.parseFloat(event.price || 0);
-    var distance = 0.5 * data.Items[0].distance.N + 0.5 * Number.parseFloat(event.distance || 0);
-
+    if(newtags.length > 10)
+        newtags.shift();
+    console.log(newtags);
+    var price = Math.min(0.5 * parseFloat(data.Items[0].price.N) + 0.5 * Number.parseFloat(event.price || 0), 5.0);
+    var distance = 0.5 * parseFloat(data.Items[0].distance.N) + 0.5 * Number.parseFloat(event.distance || 0);
+    console.log(price);
+    console.log(distance);
     var params = {
         TableName: 'Hotel-User',
         Key:{
             "username": event.username
         },
-        UpdateExpression: "set tag = :tags, distance = :d, price = :p",
+        UpdateExpression: "set tags = :tags, distance = :d, price = :p",
         ExpressionAttributeValues:{
-            ":tags": newtags,
-            ":d": distance+"",
-            ":p": price+""
+            ":tags": JSON.stringify({tags : newtags}),
+            ":d": distance,
+            ":p": price
         },
         ReturnValues:"UPDATED_NEW"
     };
