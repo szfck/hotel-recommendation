@@ -3,6 +3,8 @@ import { } from '@types/googlemaps';
 import { UserService } from '../../service';
 import { Hotel } from '../../constant';
 import { environment } from '../../../environments/environment.prod';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
     selector: 'app-google-map',
     templateUrl: './google-map.component.html',
@@ -13,10 +15,15 @@ export class GoogleMapComponent implements OnInit {
     myMap;
     hotels: Hotel[];
     hotelList: Hotel[] = [];
+    chosenMarker: any;
     tagItems: { [tag: string]: Hotel[] } = {};
     tags: string[] = [];
-    
-    constructor(private userServie: UserService) { }
+    bookHotelName: string;
+    closeResult: string;
+
+    constructor(
+        private userServie: UserService,
+        private modalService: NgbModal) { }
 
     addCenter(map, latLng) {
         if (map.centerMarker !== undefined) {
@@ -42,13 +49,49 @@ export class GoogleMapComponent implements OnInit {
 
     clickTag(tag) {
         console.log(tag);
-        this.userServie.getToken(token => {
-            console.log(token);
-            this.userServie.clickTag(token, tag).subscribe(res => {
-                console.log(`click tag resp: ${res}`);
+        if (tag != 'All') {
+            this.userServie.getToken(token => {
+                console.log(token);
+                this.userServie.clickTag(token, [tag]).subscribe(res => {
+                    console.log(`click tag resp: ${res}`);
+                });
             });
-        });
+        }
+
         this.filter(tag == 'All' ? false : true, tag);
+    }
+
+    private getDismissReason(reason: any): string {
+        if (reason === ModalDismissReasons.ESC) {
+            return 'by pressing ESC';
+        } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+            return 'by clicking on a backdrop';
+        } else {
+            return `with: ${reason}`;
+        }
+    }
+
+    bookHotel(content, hotel: Hotel) {
+        // console.log(`book ${hotel}`);
+        this.modalService.open(content).result.then((result) => {
+            this.closeResult = `Closed with: ${result}`;
+            console.log(`Closed with: ${result}`);
+            if (result == 'Confirm') {
+                console.log('confirmed');
+                this.userServie.getToken(token => {
+                    console.log(token);
+                    this.userServie.clickTag(token, hotel.tags).subscribe(res => {
+                        console.log(`click tag resp: ${res}`);
+                    });
+                });
+            }
+
+        }, (reason) => {
+            this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+            console.log(`Dismissed ${this.getDismissReason(reason)}`);
+
+        });
+
     }
 
     filter(isFilter, targetTag?) {
@@ -65,26 +108,39 @@ export class GoogleMapComponent implements OnInit {
         });
         var that = this;
         this.hotelList.forEach(hotel => {
-            var marker = new google.maps.Marker({
+            let marker: any = new google.maps.Marker({
                 map: this.myMap,
                 title: hotel.name,
-                position: new google.maps.LatLng(hotel.lat, hotel.lng)
+                position: new google.maps.LatLng(hotel.lat, hotel.lng),
+                animation: google.maps.Animation.DROP
             })
 
             hotel.marker = marker;
 
             console.log(hotel);
 
-            var infowindow = new google.maps.InfoWindow({
+            marker.infowindow = new google.maps.InfoWindow({
                 content: hotel.desc
             });
 
             marker.addListener('click', function () {
-                infowindow.open(that.myMap, marker);
+                if (that.chosenMarker) {
+                    that.chosenMarker.infowindow.close();
+                }
+                that.chosenMarker = marker;
+                marker.infowindow.open(that.myMap, marker);
+                that.myMap.setOptions({
+                    center: new google.maps.LatLng(marker.getPosition().lat(), marker.getPosition().lng()),
+                    zoom: 12
+                });
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+                setTimeout(() => {
+                    marker.setAnimation(null);
+                }, 1000);
+
             });
 
         });
-
     }
 
     clickHotel(hotel: Hotel) {
@@ -99,16 +155,13 @@ export class GoogleMapComponent implements OnInit {
         }
         const position = this.myMap.centerMarker.getPosition();
 
-        // console.log(`send postion (${position.lat()}, ${position.lng()})`);
-        
-        // let that = this;
         this.userServie.getToken(token => {
             this.userServie.getRecommendHotels(token, position).
                 subscribe(hotels => {
                     this.hotels = hotels;
                     this.tagItems = {};
                     this.tags = [];
-                    
+
                     this.tagItems['All'] = [];
                     // add tags
                     this.hotels.forEach(hotel => {
@@ -124,8 +177,6 @@ export class GoogleMapComponent implements OnInit {
                             }
                         });
                     });
-
-                    
 
                     for (var tag in this.tagItems) {
                         this.tags.push(tag);
@@ -151,9 +202,6 @@ export class GoogleMapComponent implements OnInit {
             center: new google.maps.LatLng(40.6945088, -73.9871052),
             zoom: 4,
             minZoom: 3
-            // center: { lat: 40.6945088, lng: -73.9871052 },
-            // zoom: 12,
-            // mapTypeId: google.maps.MapTypeId.ROADMAP
         });
 
         let that = this;
@@ -168,19 +216,6 @@ export class GoogleMapComponent implements OnInit {
         // Create the search box and link it to the UI element.
         var input: HTMLInputElement = <HTMLInputElement>document.getElementById('pac-input');
         var searchBox = new google.maps.places.SearchBox(input);
-        // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-        // Bias the SearchBox results towards current map's viewport.
-        // map.addListener('bounds_changed', function () {
-        //     searchBox.setBounds(map.getBounds());
-        // });
-
-        // Layer with all the hotel location markers
-        //    let ctaLayer = new google.maps.KmlLayer({
-        //             //need to host kml file on public server which google can search for
-        //             url: 'https://raw.githubusercontent.com/pengcheng95/hbdmap/master/HBD.kml',
-        //             map: map
-        //         });
 
         var markers = [];
         // Listen for the event fired when the user selects a prediction and retrieve
@@ -192,19 +227,6 @@ export class GoogleMapComponent implements OnInit {
                 return;
             }
 
-            console.log(places.length);
-
-
-            // Clear out the old markers.
-            // markers.forEach(function (marker) {
-            //     marker.setMap(null);
-            // });
-            // markers = [];
-            // if (that.centerMarker !== undefined) {
-            //     that.centerMarker.setMap(null);
-            // }
-
-
             // For each place, get the icon, name and location.
             var bounds = new google.maps.LatLngBounds();
             places.forEach(function (place) {
@@ -214,31 +236,10 @@ export class GoogleMapComponent implements OnInit {
                     console.log("Returned place contains no geometry");
                     return;
                 }
-                // var icon = {
-                //     url: place.icon,
-                //     size: new google.maps.Size(71, 71),
-                //     origin: new google.maps.Point(0, 0),
-                //     anchor: new google.maps.Point(17, 34),
-                //     scaledSize: new google.maps.Size(25, 25)
-                // };
+
                 console.log(place.geometry.location);
 
                 that.addCenter(map, place.geometry.location);
-                // Create a marker for each place.
-
-                // that.centerMarker = new google.maps.Marker({
-                //     map: map,
-                //     icon: icon,
-                //     title: place.name,
-                //     position: place.geometry.location
-                // });
-
-                // markers.push(new google.maps.Marker({
-                //     map: map,
-                //     icon: icon,
-                //     title: place.name,
-                //     position: place.geometry.location
-                // }));
 
                 if (place.geometry.viewport) {
                     // Only geocodes have viewport.

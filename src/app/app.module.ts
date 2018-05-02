@@ -21,6 +21,7 @@ import {
 } from './service';
 import { GoogleMapComponent } from './component/google-map/google-map.component';
 import { ProfileComponent } from './component/profile/profile.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [
@@ -38,6 +39,7 @@ import { ProfileComponent } from './component/profile/profile.component';
         RoutingModule,
         FormsModule,
         HttpClientModule,
+        NgbModule.forRoot()
         // HttpClientInMemoryWebApiModule.forRoot(
         //     InMemoryDataService, { dataEncapsulation: false }
         // )

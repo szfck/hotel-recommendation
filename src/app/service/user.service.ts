@@ -19,7 +19,7 @@ import {
 
 interface clickInfo {
     username: String;
-    tag: String;
+    tags: String[];
 };
 
 interface QueryInfo {
@@ -87,7 +87,7 @@ export class UserService {
 
     // user click a tag
     // send click info to server
-    clickTag(token, tag: String): Observable<clickInfo> {
+    clickTag(token, tags: String[]): Observable<clickInfo> {
         console.log(`get token ${token}`);
         const httpOptions = {
             headers: {
@@ -101,7 +101,7 @@ export class UserService {
 
         const clickinfo: clickInfo = {
             username: username,
-            tag: tag
+            tags: tags
         };
 
         return this.http.post<clickInfo>(clickTagUrl, clickinfo, httpOptions);

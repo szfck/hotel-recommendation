@@ -83,9 +83,12 @@
     width: 345px;
   }
 
-  .list-group{
+  .list-group {
     max-height: 600px;
-    
-    overflow:auto;
-    
-}
+    overflow: auto;
+  }
+
+  .tag-group {
+    max-height: 150px;
+    overflow: auto;
+  }
