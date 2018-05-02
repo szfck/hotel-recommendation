@@ -73,6 +73,7 @@ export class GoogleMapComponent implements OnInit {
 
     bookHotel(content, hotel: Hotel) {
         // console.log(`book ${hotel}`);
+        this.bookHotelName = hotel.name;
         this.modalService.open(content).result.then((result) => {
             this.closeResult = `Closed with: ${result}`;
             console.log(`Closed with: ${result}`);
