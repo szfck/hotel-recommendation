@@ -121,16 +121,17 @@ export class GoogleMapComponent implements OnInit {
 
             console.log(hotel);
 
-            // marker.infowindow = new google.maps.InfoWindow({
-            //     content: hotel.desc
-            // });
+            marker.infowindow = new google.maps.InfoWindow({
+                content: `${hotel.name}`
+                // content: hotel.desc
+            });
 
             marker.addListener('click', function () {
-                // if (that.chosenMarker) {
-                //     that.chosenMarker.infowindow.close();
-                // }
+                if (that.chosenMarker) {
+                    that.chosenMarker.infowindow.close();
+                }
                 that.chosenMarker = marker;
-                // marker.infowindow.open(that.myMap, marker);
+                marker.infowindow.open(that.myMap, marker);
                 that.myMap.setOptions({
                     center: new google.maps.LatLng(marker.getPosition().lat(), marker.getPosition().lng()),
                     zoom: 12
