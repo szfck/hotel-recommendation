@@ -1,5 +1,7 @@
 <!-- <h1>{{ title }}</h1> -->
 
+<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-3">
@@ -15,12 +17,23 @@
                         <div class="row">
                             <div (click)="clickHotel(hotel)" class="col-8">
                                 <div>
+
+                                    <ng-template #t let-fill="fill">
+                                        <span class="star" [class.full]="fill === 100">
+                                            <span class="half" [style.width.%]="fill">&hearts;</span>&hearts;
+                                        </span>
+                                    </ng-template>
+
+                                    <div *ngIf="hotel.rate">
+                                        <ngb-rating [(rate)]="hotel.rate" [starTemplate]="t" [readonly]="true" max="5"></ngb-rating>
+                                    </div>
+
                                     <h5 class="mb-1">{{ hotel.name }}</h5>
                                     <ul *ngFor="let tag of hotel.tags">
                                         <label>{{ tag }}</label>
                                     </ul>
                                 </div>
-                                <small>{{ hotel.desc }}</small>
+                                <!-- <small>{{ hotel.desc }}</small> -->
                             </div>
 
                             <div class="col-4">
@@ -35,7 +48,7 @@
                                         <p>Confirm to book {{ bookHotelName }}</p>
                                     </div>
                                     <div class="modal-footer">
-                                            <button type="button" class="btn btn-outline-dark" (click)="c('Confirm')">Confirm</button>
+                                        <button type="button" class="btn btn-outline-dark" (click)="c('Confirm')">Confirm</button>
                                         <button type="button" class="btn btn-outline-dark" (click)="c('Close')">Close</button>
                                     </div>
                                 </ng-template>
@@ -46,21 +59,46 @@
                 </ul>
             </div>
         </div>
+
+
+
         <div class="col">
             <div class="row m-2">
+                <!-- <div class="mr-3">
+                    <input id="pac-input" class="form-control mr-sm-2" type="search" placeholder="Search by location" aria-label="Search">
+                </div> -->
+                <div class="mr-3">
+                    <button type="button" class="btn-info" (click)="relocate()">My Location</button>
+                </div>
+                <!-- <div class="mr-3">
+                    <button type="button" class="btn-info" (click)="recommend()">Search Hotel By Current Location</button>
+                </div> -->
+
+                <div class="mr-3">
+                    <input id="inputTag" class="mr-sm-2" type="search" placeholder="Tag">
+                </div>
+
+                <div class="mr-3">
+                    <button type="button" class="btn-info" (click)="search()">Search</button>
+                </div>
+
+                <div class="mr-3">
+                    <button type="button" class="btn-info" (click)="clear()">clear</button>
+                </div>
+
+            </div>
+
+            <!-- <div class="row m-2">
                 <div class="mr-3">
                     <input id="pac-input" class="form-control mr-sm-2" type="search" placeholder="Search by location" aria-label="Search">
                 </div>
                 <div class="mr-3">
-                    <button type="button" class="btn-info" (click)="relocate()">My Location</button>
-                </div>
-                <div class="mr-3">
-                    <button type="button" class="btn-info" (click)="recommend()">find hotel</button>
+                    <button type="button" class="btn-info" (click)="recommend()">Search Hotel By Current Location</button>
                 </div>
                 <div>
                     <button type="button" class="btn-info" (click)="clear()">clear</button>
                 </div>
-            </div>
+            </div> -->
 
 
             <div id="map-container">

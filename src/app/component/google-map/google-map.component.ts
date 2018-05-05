@@ -20,6 +20,7 @@ export class GoogleMapComponent implements OnInit {
     tags: string[] = [];
     bookHotelName: string;
     closeResult: string;
+    rating = 3.5;
 
     constructor(
         private userServie: UserService,
@@ -120,16 +121,16 @@ export class GoogleMapComponent implements OnInit {
 
             console.log(hotel);
 
-            marker.infowindow = new google.maps.InfoWindow({
-                content: hotel.desc
-            });
+            // marker.infowindow = new google.maps.InfoWindow({
+            //     content: hotel.desc
+            // });
 
             marker.addListener('click', function () {
-                if (that.chosenMarker) {
-                    that.chosenMarker.infowindow.close();
-                }
+                // if (that.chosenMarker) {
+                //     that.chosenMarker.infowindow.close();
+                // }
                 that.chosenMarker = marker;
-                marker.infowindow.open(that.myMap, marker);
+                // marker.infowindow.open(that.myMap, marker);
                 that.myMap.setOptions({
                     center: new google.maps.LatLng(marker.getPosition().lat(), marker.getPosition().lng()),
                     zoom: 12
@@ -149,11 +150,59 @@ export class GoogleMapComponent implements OnInit {
         new google.maps.event.trigger(hotel.marker, 'click');
     }
 
-    recommend() {
+    search() {
         if (this.myMap.centerMarker === undefined) {
             alert('choose you location first');
             return
         }
+
+        let text = (<HTMLInputElement>document.getElementById("inputTag")).value;
+        console.log(`text is ${text}`);
+
+        // recommend hotel by user's history
+        if (text == '') {
+            this.recommend();
+        } else { // search by tag
+            this.searchByTag(text);
+        }
+    }
+
+    searchByTag(tag: string) {
+        this.userServie.getToken(token => {
+            console.log(token);
+            
+            this.userServie.getTagHotels(token, tag).
+                subscribe(hotels => {
+                    this.hotels = hotels;
+                    this.tagItems = {};
+                    this.tags = [];
+
+                    this.tagItems['All'] = [];
+                    // add tags
+                    this.hotels.forEach(hotel => {
+                        this.tagItems['All'].push(hotel);
+                        hotel.tags.forEach(tag => {
+                            console.log(tag);
+                            if (this.tagItems[tag] === undefined) {
+                                this.tagItems[tag] = [hotel];
+
+                            } else {
+                                var tmp = this.tagItems[tag];
+                                this.tagItems[tag].push(hotel);
+                            }
+                        });
+                    });
+
+                    for (var tag in this.tagItems) {
+                        this.tags.push(tag);
+                    }
+
+                    this.filter(false);
+                });
+        });
+    }
+
+    recommend() {
         const position = this.myMap.centerMarker.getPosition();
 
         this.userServie.getToken(token => {
@@ -217,6 +266,9 @@ export class GoogleMapComponent implements OnInit {
         // Create the search box and link it to the UI element.
         var input: HTMLInputElement = <HTMLInputElement>document.getElementById('pac-input');
         var searchBox = new google.maps.places.SearchBox(input);
+
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
 
         var markers = [];
         // Listen for the event fired when the user selects a prediction and retrieve

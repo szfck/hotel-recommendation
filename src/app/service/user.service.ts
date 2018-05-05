@@ -22,6 +22,10 @@ interface clickInfo {
     tags: String[];
 };
 
+interface TagInfo {
+    tag: String;
+};
+
 interface QueryInfo {
     username: String;
     lat: Number;
@@ -57,6 +61,29 @@ export class UserService {
             });
         }
         return token;
+    }
+
+    // get hotel by the given tag
+    getTagHotels(token, tag: string): Observable<Hotel[]> {
+        const httpOptions = {
+            headers: {
+                Authorization: token
+            }
+        };
+
+        const username = this.cognitoService.getCurrentUser().getUsername();
+
+        let hotelsUrl = `${UserService.baseAPI}/hotels/tag`;
+
+        const tagInfo: TagInfo = {
+            tag: tag
+        };
+
+        console.log('search by tag');
+        
+
+        return this.http.post<Hotel[]>(hotelsUrl, tagInfo, httpOptions);
+
     }
 
     // get hotel recommendations given the current position and username
