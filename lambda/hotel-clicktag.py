@@ -6,7 +6,8 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = (event, context, callback) => {
     var username = event.username;
-    var tag = event.tag;
+    var tag = event.tags;
+    console.log(event);
     dynamo.query({
         TableName: 'Hotel-User',
         Select: 'ALL_ATTRIBUTES',
@@ -27,7 +28,7 @@ exports.handler = (event, context, callback) => {
 };
 
 function insertTag(event, data, callback) {
-    var tags = {tags : [event.tag]};
+    var tags = {tags : [event.tags]};
     var price = Number.parseFloat(event.price || 0);
     var distance = Number.parseFloat(event.distance || 0);
     dynamo.putItem({
@@ -50,15 +51,18 @@ function insertTag(event, data, callback) {
 
 function updateTag(event, data, callback) {
     var newtags = JSON.parse(data.Items[0].tags.S).tags;
-    console.log(newtags);
-    newtags.push(event.tag);
-    if(newtags.length > 10)
-        newtags.shift();
-    console.log(newtags);
+    var tags = event.tags;
+    for(var i = 0; i < tags.length; i++) {
+        newtags.push(tags[i]);
+        if(newtags.length > 10)
+            newtags.shift();
+    }
+    
     var price = Math.min(0.5 * parseFloat(data.Items[0].price.N) + 0.5 * Number.parseFloat(event.price || 0), 5.0);
     var distance = 0.5 * parseFloat(data.Items[0].distance.N) + 0.5 * Number.parseFloat(event.distance || 0);
     console.log(price);
     console.log(distance);
+    console.log(JSON.stringify({tags : newtags}));
     var params = {
         TableName: 'Hotel-User',
         Key:{
