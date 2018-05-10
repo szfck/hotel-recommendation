@@ -28,7 +28,7 @@ exports.handler = (event, context, callback) => {
 };
 
 function insertTag(event, data, callback) {
-    var tags = {tags : [event.tags]};
+    var tags = {tags : event.tags};
     var price = Number.parseFloat(event.price || 0);
     var distance = Number.parseFloat(event.distance || 0);
     dynamo.putItem({
